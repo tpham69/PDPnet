@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WelcomeActivity">
+
+    <ImageView
+        android:layout_width="231dp"
+        android:layout_height="78dp"
+        android:src="@drawable/fpl_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="81dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:background="@color/main_color"
+        android:layout_alignParentBottom="true"
+        />
+
+    <ImageView
+        android:id="@+id/imgAndroid"
+        android:layout_width="193dp"
+        android:layout_height="233dp"
+        android:src="@drawable/android_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="150dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xin chào!"
+        android:textSize="40sp"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/imgAndroid"
+        android:layout_marginBottom="30dp"
+        />
+</RelativeLayout>

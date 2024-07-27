@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900414029664",
+    "project_id": "pdpnet-d7143",
+    "storage_bucket": "pdpnet-d7143.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900414029664:android:f2ac16617d52963ea82805",
+        "android_client_info": {
+          "package_name": "thaiph.ph48495.pdpnet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNyon4ekG2Z87jHrmf69G6M-U_peOIxwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
