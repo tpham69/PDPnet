@@ -31,6 +31,7 @@ public class DBhelper extends SQLiteOpenHelper {
                 "TODAY_DISTANCE REAL, " +
                 "TOTAL_DISTANCE REAL)";
         db.execSQL(createUserTable);
+        db.execSQL("CREATE TABLE BietOn (ID INTEGER PRIMARY KEY AUTOINCREMENT , ENTRY TEXT,DATE TEXT)");
     }
 
     @Override
@@ -38,6 +39,7 @@ public class DBhelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS STEPS");
         db.execSQL("DROP TABLE IF EXISTS STREAK");
         db.execSQL("DROP TABLE IF EXISTS USER");
+        db.execSQL("DROP TABLE IF EXISTS BietOn");
         onCreate(db);
     }
 }

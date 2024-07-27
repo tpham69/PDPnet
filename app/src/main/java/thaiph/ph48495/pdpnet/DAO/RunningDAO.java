@@ -22,11 +22,9 @@ public class RunningDAO {
     public void insertStepCount(int stepCount) {
         SQLiteDatabase db = dBhelper.getWritableDatabase();
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
         ContentValues values = new ContentValues();
         values.put("DATE", currentDate);
         values.put("STEPS", stepCount);
-
         db.insertWithOnConflict("STEPS", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
