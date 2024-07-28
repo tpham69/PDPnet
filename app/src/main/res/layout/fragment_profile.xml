@@ -32,17 +32,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/avatarImageView"
-            android:layout_alignTop="@id/emailLabel"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:layout_toRightOf="@id/emailLabel"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/streakGratitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/emailTextView"
+            android:layout_marginTop="16dp"
+            android:text="Chuỗi biết ơn:"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/streakGratitudeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/emailTextView"
+            android:layout_marginTop="16dp"
+            android:layout_toRightOf="@id/streakGratitudeLabel"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/streakLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/emailTextView"
+            android:layout_below="@id/streakGratitudeTextView"
+            android:layout_marginTop="16dp"
             android:text="Chuỗi chạy bộ:"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -51,10 +69,8 @@
             android:id="@+id/streakTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/emailTextView"
-            android:layout_alignTop="@id/streakLabel"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_below="@id/streakGratitudeTextView"
+            android:layout_marginTop="16dp"
             android:layout_toRightOf="@id/streakLabel"
             android:textSize="18sp" />
 
@@ -63,6 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/streakTextView"
+            android:layout_marginTop="16dp"
             android:text="Quãng đường hôm nay:"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -72,9 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/streakTextView"
-            android:layout_alignTop="@id/todayDistanceLabel"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:layout_toRightOf="@id/todayDistanceLabel"
             android:textSize="18sp" />
 
@@ -83,6 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/todayDistanceTextView"
+            android:layout_marginTop="16dp"
             android:text="Tổng quãng đường:"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -92,9 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/todayDistanceTextView"
-            android:layout_alignTop="@id/totalDistanceLabel"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:layout_toRightOf="@id/totalDistanceLabel"
             android:textSize="18sp" />
 
@@ -113,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="120dp"
+            android:layout_marginBottom="110dp"
             android:backgroundTint="#FF5722"
             android:text="Đăng xuất"
             app:cornerRadius="2dp" />

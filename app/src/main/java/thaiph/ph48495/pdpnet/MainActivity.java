@@ -1,5 +1,6 @@
 package thaiph.ph48495.pdpnet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.nav_profile){
                     ProfileFragment fm = new ProfileFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fm).commit();
+                } else if (item.getItemId() == R.id.nav_history) {
+                    Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                    startActivity(intent);
                 }
 
                 return true;

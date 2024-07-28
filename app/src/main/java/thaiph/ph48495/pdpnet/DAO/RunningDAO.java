@@ -6,120 +6,136 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import thaiph.ph48495.pdpnet.DBhelper.DBhelper;
+import thaiph.ph48495.pdpnet.models.Running;
 
 public class RunningDAO {
 
     private final DBhelper dBhelper;
 
-    public RunningDAO(Context context){
+    public RunningDAO(Context context) {
         dBhelper = new DBhelper(context);
     }
 
-    public void insertStepCount(int stepCount) {
+    public void insertRunning(Running running) {
         SQLiteDatabase db = dBhelper.getWritableDatabase();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         ContentValues values = new ContentValues();
-        values.put("DATE", currentDate);
-        values.put("STEPS", stepCount);
-        db.insertWithOnConflict("STEPS", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        values.put("USER_ID", running.getUserID());
+        values.put("DATE", running.getDate());
+        values.put("STEP", running.getSteps());
+        db.insert("STEPS", null, values);
+        db.close();
     }
 
-    public void updateStreak() {
-        SQLiteDatabase db = dBhelper.getWritableDatabase();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+    public List<Running> getAllRunning() {
+        List<Running> runningList = new ArrayList<>();
+        SQLiteDatabase db = dBhelper.getReadableDatabase();
+        Cursor cursor = db.query("STEPS", null, null, null, null, null, null);
 
-        Cursor cursor = db.query("STREAK", null, null, null, null, null, "DATE DESC", "1");
-        if (cursor != null && cursor.moveToFirst()) {
-            int dateIndex = cursor.getColumnIndex("DATE");
-            int streakIndex = cursor.getColumnIndex("STREAK");
-
-            if (dateIndex != -1 && streakIndex != -1) {
-                String lastDate = cursor.getString(dateIndex);
-                int currentStreak = cursor.getInt(streakIndex);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                try {
-                    Date lastStreakDate = sdf.parse(lastDate);
-                    Date today = sdf.parse(currentDate);
-
-                    long diff = today.getTime() - lastStreakDate.getTime();
-                    long daysDiff = diff / (1000 * 60 * 60 * 24);
-
-                    if (daysDiff == 1) {
-                        currentStreak++;
-                    } else if (daysDiff > 1) {
-                        currentStreak = 1;
-                    }
-
-                    ContentValues values = new ContentValues();
-                    values.put("DATE", currentDate);
-                    values.put("STREAK", currentStreak);
-
-                    db.insertWithOnConflict("STREAK", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            ContentValues values = new ContentValues();
-            values.put("DATE", currentDate);
-            values.put("STREAK", 1);
-
-            db.insertWithOnConflict("STREAK", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("ID"));
+                int userId = cursor.getInt(cursor.getColumnIndexOrThrow("USER_ID"));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow("DATE"));
+                int steps = cursor.getInt(cursor.getColumnIndexOrThrow("STEP"));
+                runningList.add(new Running(id, userId, date, steps));
+            } while (cursor.moveToNext());
         }
+        cursor.close();
+        db.close();
+        return runningList;
+    }
+
+    public Running getRunningById(int id) {
+        SQLiteDatabase db = dBhelper.getReadableDatabase();
+        Cursor cursor = db.query("STEPS", null, "ID=?", new String[]{String.valueOf(id)}, null, null, null);
 
         if (cursor != null) {
+            cursor.moveToFirst();
+            int userId = cursor.getInt(cursor.getColumnIndexOrThrow("USER_ID"));
+            String date = cursor.getString(cursor.getColumnIndexOrThrow("DATE"));
+            int steps = cursor.getInt(cursor.getColumnIndexOrThrow("STEP"));
             cursor.close();
+            db.close();
+            return new Running(id, userId, date, steps);
+        } else {
+            db.close();
+            return null;
         }
     }
 
-    public int getStreak() {
+    public void updateRunning(Running running) {
+        SQLiteDatabase db = dBhelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("USER_ID", running.getUserID());
+        values.put("DATE", running.getDate());
+        values.put("STEP", running.getSteps());
+        db.update("STEPS", values, "ID=?", new String[]{String.valueOf(running.getId())});
+        db.close();
+    }
+
+    public void deleteRunning(int id) {
+        SQLiteDatabase db = dBhelper.getWritableDatabase();
+        db.delete("STEPS", "ID=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public List<Running> getRunningByDate(String date) {
+        List<Running> runningList = new ArrayList<>();
         SQLiteDatabase db = dBhelper.getReadableDatabase();
-        Cursor cursor = db.query("STREAK", null, null, null, null, null, "DATE DESC", "1");
+        Cursor cursor = db.query("STEPS", null, "DATE=?", new String[]{date}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("ID"));
+                int userId = cursor.getInt(cursor.getColumnIndexOrThrow("USER_ID"));
+                int steps = cursor.getInt(cursor.getColumnIndexOrThrow("STEP"));
+                runningList.add(new Running(id, userId, date, steps));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return runningList;
+    }
+
+    public int getStreakChayBo() {
+        SQLiteDatabase db = dBhelper.getReadableDatabase();
+        Cursor cursor = db.query("STEPS", new String[]{"DATE"}, null, null, null, null, "DATE DESC");
+
         int streak = 0;
-        if (cursor != null && cursor.moveToFirst()) {
-            int streakIndex = cursor.getColumnIndex("STREAK");
-            if (streakIndex != -1) {
-                streak = cursor.getInt(streakIndex);
-            }
-            cursor.close();
+        String previousDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        if (cursor.moveToFirst()) {
+            do {
+                String currentDate = cursor.getString(cursor.getColumnIndexOrThrow("DATE"));
+                if (previousDate == null) {
+                    streak++;
+                } else {
+                    try {
+                        Date prevDate = sdf.parse(previousDate);
+                        Date currDate = sdf.parse(currentDate);
+                        long diff = prevDate.getTime() - currDate.getTime();
+                        long daysDiff = diff / (1000 * 60 * 60 * 24);
+                        if (daysDiff == 1) {
+                            streak++;
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                previousDate = currentDate;
+            } while (cursor.moveToNext());
         }
+        cursor.close();
+        db.close();
         return streak;
-    }
-
-    public float getTodayDistance() {
-        SQLiteDatabase db = dBhelper.getReadableDatabase();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        Cursor cursor = db.query("STEPS", new String[]{"STEPS"}, "DATE = ?", new String[]{currentDate}, null, null, null);
-        float todayDistance = 0;
-        if (cursor != null && cursor.moveToFirst()) {
-            int stepsIndex = cursor.getColumnIndex("STEPS");
-            if (stepsIndex != -1) {
-                int steps = cursor.getInt(stepsIndex);
-                todayDistance = steps * 0.0008f;
-            }
-            cursor.close();
-        }
-        return todayDistance;
-    }
-
-    public float getTotalDistance() {
-        SQLiteDatabase db = dBhelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT SUM(STEPS) AS totalSteps FROM STEPS", null);
-        float totalDistance = 0;
-        if (cursor != null && cursor.moveToFirst()) {
-            int totalStepsIndex = cursor.getColumnIndex("totalSteps");
-            if(totalStepsIndex != -1){
-                int totalSteps = cursor.getInt(totalStepsIndex);
-                totalDistance  = totalSteps * 0.0008f;
-
-            }
-            cursor.close();
-        }
-        return totalDistance;
     }
 }

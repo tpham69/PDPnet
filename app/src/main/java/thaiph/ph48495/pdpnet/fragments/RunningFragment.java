@@ -26,8 +26,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import thaiph.ph48495.pdpnet.DAO.RunningDAO;
+import thaiph.ph48495.pdpnet.DAO.UserDAO;
 import thaiph.ph48495.pdpnet.R;
+import thaiph.ph48495.pdpnet.models.Running;
 import thaiph.ph48495.pdpnet.services.StepCounterService;
 
 public class RunningFragment extends Fragment implements SensorEventListener {
@@ -39,6 +45,7 @@ public class RunningFragment extends Fragment implements SensorEventListener {
     private int stepCount = 1000;
     private TextView stepCountTextView;
     private RunningDAO runningDAO;
+    private UserDAO userDAO;
     private Button startButton, stopButton, setGoalButton;
     private EditText goalInput;
     private boolean isRunning = false;
@@ -62,6 +69,7 @@ public class RunningFragment extends Fragment implements SensorEventListener {
         sensorManager = (SensorManager) getActivity().getSystemService(getContext().SENSOR_SERVICE);
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         runningDAO = new RunningDAO(getContext());
+        userDAO = new UserDAO(getContext());
         tvKilometer = view.findViewById(R.id.tvKilometer);
 
         // Disable start and stop
@@ -179,7 +187,6 @@ public class RunningFragment extends Fragment implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             stepCount = (int) event.values[0];
             stepCountTextView.setText(String.valueOf(stepCount));
-            runningDAO.insertStepCount(stepCount);
 
             // Calculate distance in kilometers and update the new TextView
             float distanceCovered = stepCount * 0.0008f;
@@ -195,9 +202,9 @@ public class RunningFragment extends Fragment implements SensorEventListener {
                     sensorManager.unregisterListener(RunningFragment.this, stepCounterSensor);
                 }
                 getActivity().stopService(new Intent(getContext(), StepCounterService.class));
-
-                runningDAO.insertStepCount(stepCount);
-                runningDAO.updateStreak();
+                int userId = getUserID();
+                String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                runningDAO.insertRunning(new Running(0, userId, currentDate, stepCount));
             }
         }
     }
@@ -206,33 +213,13 @@ public class RunningFragment extends Fragment implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    // Method to simulate step count increment for testing
-    private void simulateStepCount(boolean isRunning) {
-        if(isRunning){
-            new Thread(() -> {
-                try {
-                    while (true) {
-                        Thread.sleep(200); // Simulate step count increment every second
-                        stepCount++;
-                        getActivity().runOnUiThread(() -> {
-                            stepCountTextView.setText(String.valueOf(stepCount));
-                            float distanceCovered = stepCount * 0.0008f;
-                            tvKilometer.setText(String.format("Tương đương đã đi: %.2f km", distanceCovered));
-                        });
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        } else {
-            stepCount = 0;
-            stepCountTextView.setText("0");
-            tvKilometer.setText("Tương đương đã đi: 0 km");
-        }
-    }
-
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private int getUserID(){
+        Intent i = getActivity().getIntent();
+        return userDAO.getIDbyEmail(i.getStringExtra("email"));
     }
 }

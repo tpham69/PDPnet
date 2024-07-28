@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         editor.apply();
 
                         Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra("email", email);
                         startActivity(intent);
                         finish();
                     } else {

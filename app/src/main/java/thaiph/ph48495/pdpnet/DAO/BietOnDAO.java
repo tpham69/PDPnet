@@ -4,65 +4,103 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import thaiph.ph48495.pdpnet.DBhelper.DBhelper;
-import thaiph.ph48495.pdpnet.models.Gratitude;
+import thaiph.ph48495.pdpnet.models.BietOn;
 
 public class BietOnDAO {
-    private DBhelper dBhelper;
-    private SQLiteDatabase db;
-    public BietOnDAO(Context context){
-        dBhelper = new DBhelper(context);
 
+    private final DBhelper dBhelper;
+
+    public BietOnDAO(Context context) {
+        dBhelper = new DBhelper(context);
     }
 
-    public long insertGratitude(Gratitude entry) {
+    public void insertBietOn(BietOn bietOn) {
         SQLiteDatabase db = dBhelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("ENTRY", entry.getEntry());
-        values.put("DATE", entry.getDate());
-        long check = db.insert("BietOn",null,values);
-        if(check<=0){
-            return -1;
-        }
-        return 1;
+        values.put("USER_ID", bietOn.getUserID());
+        values.put("CONTENTS", String.join(",", bietOn.getContents()));
+        values.put("DATE", bietOn.getDate());
+        db.insert("BietOn", null, values);
+        db.close();
     }
 
-    public ArrayList<Gratitude> getAllGratitude() {
-        ArrayList<Gratitude> list = new ArrayList<>();
-        db = dBhelper.getReadableDatabase();
-        try{
-            Cursor c =  db.rawQuery("SELECT * FROM BietOn", null);
-        if(c!= null && c.getCount()>0){
-            c.moveToFirst();
+    public void updateBietOn(BietOn bietOn) {
+        SQLiteDatabase db = dBhelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("USER_ID", bietOn.getUserID());
+        values.put("CONTENTS", String.join(",", bietOn.getContents()));
+        values.put("DATE", bietOn.getDate());
+        db.update("BietOn", values, "ID = ?", new String[]{String.valueOf(bietOn.getId())});
+        db.close();
+    }
+
+    public List<BietOn> getAllBietOn() {
+        List<BietOn> bietOnList = new ArrayList<>();
+        SQLiteDatabase db = dBhelper.getReadableDatabase();
+        Cursor cursor = db.query("BietOn", null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
             do {
-                int id = c.getInt(0);
-                String entry = c.getString(1);
-                String date = c.getString(2);
-                list.add(new Gratitude(id,entry,date));
-            }while (c.moveToNext());
-        }}catch (Exception e){
-            Log.e("Loi",e.getMessage());
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("ID"));
+                int userId = cursor.getInt(cursor.getColumnIndexOrThrow("USER_ID"));
+                String contents = cursor.getString(cursor.getColumnIndexOrThrow("CONTENTS"));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow("DATE"));
+
+                List<String> contentList = Arrays.asList(contents.split(","));
+
+                BietOn bietOn = new BietOn(id, contentList, date, userId);
+                bietOnList.add(bietOn);
+            } while (cursor.moveToNext());
         }
-        return list;
-    }
-    public long delete(int id){
-        db = dBhelper.getWritableDatabase();
-        long check = db.delete("BietOn","ID=?",new String[]{String.valueOf(id)});
-        if(check<=0){
-            return -1;
-        }
-        return 1;
+
+        cursor.close();
+        db.close();
+        return bietOnList;
     }
 
-    private String getCurrentTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return sdf.format(new Date());
+    public int getStreakBietOn() {
+        SQLiteDatabase db = dBhelper.getReadableDatabase();
+        Cursor cursor = db.query("BietOn", new String[]{"DATE"}, null, null, null, null, "DATE DESC");
+
+        int streak = 0;
+        String previousDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        if (cursor.moveToFirst()) {
+            do {
+                String currentDate = cursor.getString(cursor.getColumnIndexOrThrow("DATE"));
+                if (previousDate == null) {
+                    streak++;
+                } else {
+                    try {
+                        Date prevDate = sdf.parse(previousDate);
+                        Date currDate = sdf.parse(currentDate);
+                        long diff = prevDate.getTime() - currDate.getTime();
+                        long daysDiff = diff / (1000 * 60 * 60 * 24);
+                        if (daysDiff == 1) {
+                            streak++;
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                previousDate = currentDate;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return streak;
     }
+
 }

@@ -65,7 +65,6 @@ public class StepCounterService extends Service implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             stepCount = (int) event.values[0];
-            runningDAO.insertStepCount(stepCount);
             updateNotification("Steps: " + stepCount);
         }
     }

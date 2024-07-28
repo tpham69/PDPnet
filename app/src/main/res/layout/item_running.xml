@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ngày 18 tháng 2 năm 2024"
+        android:gravity="center"
+        android:background="#8BC34A"
+        android:textColor="@color/white"
+        android:textStyle="italic"/>
+    <TextView
+        android:id="@+id/tvStep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Số bước chân: "
+        android:layout_weight="5"
+        android:padding="5dp"/>
+    <TextView
+        android:id="@+id/tvKilometer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Số bước chân: "
+        android:layout_weight="5"
+        android:padding="5dp"/>
+
+
+
+</LinearLayout>
