@@ -6,14 +6,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
@@ -26,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     //FireBase
     FirebaseAuth auth;
     Button btnDangNhap, btnDangKy;
+    TextView btnQuenMatKhau;
     TextInputEditText edtTaiKhoan, edtMatKhau;
     CheckBox chkGhiNho;
     //SharedPreferences
@@ -44,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         btnDangNhap = findViewById(R.id.btnDangNhap);
         btnDangKy = findViewById(R.id.btnDangKy);
+        btnQuenMatKhau = findViewById(R.id.btnQuenMatKhau);
         edtTaiKhoan = findViewById(R.id.edtTaiKhoan);
         edtMatKhau = findViewById(R.id.edtMatKhau);
         chkGhiNho = findViewById(R.id.chkGhiNho);
@@ -69,6 +68,11 @@ public class LoginActivity extends AppCompatActivity {
         //Chuyển sang màn hình đăng ký
         btnDangKy.setOnClickListener(v -> {
             Intent intent = new Intent(this, SignUpActivity.class);
+            startActivity(intent);
+        });
+
+        btnQuenMatKhau.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
     }

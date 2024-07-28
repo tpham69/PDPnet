@@ -76,7 +76,7 @@ public class RunningFragment extends Fragment implements SensorEventListener {
                     goalDistance = Float.parseFloat(goalText);
                     if (goalDistance >= 1) {
                         Toast.makeText(getContext(), "Mục tiêu đã được đặt: " + goalDistance + " km", Toast.LENGTH_SHORT).show();
-                        // Enable start and stop buttons when a valid goal is set
+
                         startButton.setEnabled(true);
                         stopButton.setEnabled(true);
                         goalInput.setText("");
@@ -96,6 +96,10 @@ public class RunningFragment extends Fragment implements SensorEventListener {
                 if (checkPermissions()) {
 //                    simulateStepCount(true); //test inscrement step count, nhớ xóa khi hoàn thành
                     startRunningService();
+                    //disable all other buttons
+                    setGoalButton.setEnabled(false);
+                    startButton.setEnabled(false);
+                    goalInput.setEnabled(false);
                 } else {
                     requestPermissions();
                 }
@@ -114,6 +118,10 @@ public class RunningFragment extends Fragment implements SensorEventListener {
                     sensorManager.unregisterListener(RunningFragment.this, stepCounterSensor);
                 }
                 getActivity().stopService(new Intent(getContext(), StepCounterService.class));
+                // re-enable all buttons
+                setGoalButton.setEnabled(true);
+                startButton.setEnabled(true);
+                goalInput.setEnabled(true);
             }
         });
 
