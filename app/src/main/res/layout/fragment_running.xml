@@ -24,6 +24,14 @@
             android:textSize="30dp"
             android:textStyle="bold"
             android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/tvKilometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 km"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:layout_marginTop="16dp" />
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

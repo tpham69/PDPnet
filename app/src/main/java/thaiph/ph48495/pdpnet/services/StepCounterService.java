@@ -72,7 +72,6 @@ public class StepCounterService extends Service implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do nothing
     }
 
     private void createNotificationChannel() {
@@ -91,7 +90,7 @@ public class StepCounterService extends Service implements SensorEventListener {
 
     private Notification getNotification(String contentText) {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Step Counter Service")
+                .setContentTitle("Step Counter")
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.baseline_directions_run_24)
                 .build();
@@ -101,4 +100,5 @@ public class StepCounterService extends Service implements SensorEventListener {
         Notification notification = getNotification(contentText);
         notificationManager.notify(1, notification);
     }
+
 }

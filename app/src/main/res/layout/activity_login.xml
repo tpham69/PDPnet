@@ -77,5 +77,23 @@
         android:backgroundTint="#FFA726"
         app:cornerRadius="2dp"
         />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quên mật khẩu?"
+            android:textSize="18sp"
+            android:textStyle="italic"/>
+        <TextView
+            android:id="@+id/btnQuenMatKhau"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm lại"
+            android:textSize="18sp"
+            android:textStyle="bold|italic"/>
+    </LinearLayout>
 </LinearLayout>
