@@ -80,7 +80,6 @@ public class ProfileFragment extends Fragment {
         btnDangXuat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Hello", Toast.LENGTH_SHORT).show();
                 signOutUser();
             }
         });
@@ -88,10 +87,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private String getCurrentUserEmail() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("user_info", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("email", "");
-    }
+
 
     private void signOutUser() {
         mAuth.signOut();
@@ -124,5 +120,9 @@ public class ProfileFragment extends Fragment {
             totalSteps += running.getSteps();
         }
         return totalSteps * 0.0008f;
+    }
+
+    public String getCurrentUserEmail() {
+        return mAuth.getCurrentUser().getEmail();
     }
 }

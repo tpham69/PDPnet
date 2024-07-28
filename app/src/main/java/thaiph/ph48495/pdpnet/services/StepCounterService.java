@@ -33,6 +33,9 @@ public class StepCounterService extends Service implements SensorEventListener {
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         runningDAO = new RunningDAO(this);
 
+        //reset step count
+        stepCount = 0;
+
         if (stepCounterSensor != null) {
             sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }

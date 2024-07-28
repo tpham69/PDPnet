@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,10 +83,11 @@ public class RunningFragment extends Fragment implements SensorEventListener {
                 String goalText = goalInput.getText().toString();
 
                 // Reset UI
-                stepCount = 0;
+
+                 = 0;
                 stepCountTextView.setText(String.valueOf(stepCount));
                 tvKilometer.setText("Tương đương đã đi: 0 km");
-                
+
                 // Reset sensor
                 if (stepCounterSensor != null) {
                     sensorManager.unregisterListener(RunningFragment.this, stepCounterSensor);
