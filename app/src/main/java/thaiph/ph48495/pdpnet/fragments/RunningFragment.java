@@ -80,6 +80,18 @@ public class RunningFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View v) {
                 String goalText = goalInput.getText().toString();
+
+                // Reset UI
+                stepCount = 0;
+                stepCountTextView.setText(String.valueOf(stepCount));
+                tvKilometer.setText("Tương đương đã đi: 0 km");
+                
+                // Reset sensor
+                if (stepCounterSensor != null) {
+                    sensorManager.unregisterListener(RunningFragment.this, stepCounterSensor);
+                    sensorManager.registerListener(RunningFragment.this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                }
+
                 if (!goalText.isEmpty()) {
                     goalDistance = Float.parseFloat(goalText);
                     if (goalDistance >= 1) {
@@ -105,6 +117,7 @@ public class RunningFragment extends Fragment implements SensorEventListener {
 //                    simulateStepCount(true); //test inscrement step count, nhớ xóa khi hoàn thành
                     startRunningService();
                     //disable all other buttons
+
                     setGoalButton.setEnabled(false);
                     startButton.setEnabled(false);
                     goalInput.setEnabled(false);
