@@ -23,6 +23,7 @@ public class StepCounterService extends Service implements SensorEventListener {
     private Sensor stepCounterSensor;
     private RunningDAO runningDAO;
     private int stepCount = 0;
+    private int initialStepCount = 0;
     private NotificationManager notificationManager;
     private static final String CHANNEL_ID = "StepCounterServiceChannel";
 
@@ -34,7 +35,7 @@ public class StepCounterService extends Service implements SensorEventListener {
         runningDAO = new RunningDAO(this);
 
         //reset step count
-        stepCount = 0;
+        initialStepCount = 0;
 
         if (stepCounterSensor != null) {
             sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -47,6 +48,7 @@ public class StepCounterService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        initialStepCount = 0;
         return START_STICKY;
     }
 
@@ -67,7 +69,10 @@ public class StepCounterService extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            stepCount = (int) event.values[0];
+            if (initialStepCount == 0) {
+                initialStepCount = (int) event.values[0];
+            }
+            stepCount = (int) event.values[0] - initialStepCount;
             updateNotification("Steps: " + stepCount);
         }
     }

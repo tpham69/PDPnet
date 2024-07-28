@@ -43,7 +43,8 @@ public class RunningFragment extends Fragment implements SensorEventListener {
     private static final int PERMISSION_REQUEST_CODE = 100 ;
     private SensorManager sensorManager;
     private Sensor stepCounterSensor;
-    private int stepCount = 1000;
+    private int stepCount = 0;
+    private int initialStepCount = 0;
     private TextView stepCountTextView;
     private RunningDAO runningDAO;
     private UserDAO userDAO;
@@ -84,6 +85,7 @@ public class RunningFragment extends Fragment implements SensorEventListener {
 
                 // Reset UI
                 stepCount = 0;  // Đặt lại stepCount về 0
+                initialStepCount = 0;
                 stepCountTextView.setText(String.valueOf(stepCount));
                 tvKilometer.setText("Tương đương đã đi: 0 km");
 
@@ -116,6 +118,16 @@ public class RunningFragment extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 if (checkPermissions()) {
 //                    simulateStepCount(true); //test inscrement step count, nhớ xóa khi hoàn thành
+                    // Reset UI
+                    stepCount = 0;  // Đặt lại stepCount về 0
+                    stepCountTextView.setText(String.valueOf(stepCount));
+                    tvKilometer.setText("Tương đương đã đi: 0 km");
+
+                    // Reset sensor
+                    if (stepCounterSensor != null) {
+                        sensorManager.unregisterListener(RunningFragment.this, stepCounterSensor);
+                        sensorManager.registerListener(RunningFragment.this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    }
                     startRunningService();
                     //disable all other buttons
 
@@ -172,7 +184,6 @@ public class RunningFragment extends Fragment implements SensorEventListener {
     private void startRunningService() {
         isRunning = true;
         if (stepCounterSensor != null) {
-
             sensorManager.registerListener(RunningFragment.this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         Intent serviceIntent = new Intent(getContext(), StepCounterService.class);
@@ -199,7 +210,10 @@ public class RunningFragment extends Fragment implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            stepCount = (int) event.values[0];
+            if (initialStepCount == 0) {
+                initialStepCount = (int) event.values[0];
+            }
+            stepCount = (int) event.values[0] - initialStepCount;
             stepCountTextView.setText(String.valueOf(stepCount));
 
             // Calculate distance in kilometers and update the new TextView
